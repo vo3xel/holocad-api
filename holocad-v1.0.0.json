@@ -1,10 +1,113 @@
 {
     "swagger": "2.0",
     "basePath": "/",
-    "paths": {},
+    "paths": {
+        "/project/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "summary": "Returns:",
+                "description": "[type]: [description]",
+                "operationId": "List of all projects",
+                "tags": [
+                    "project"
+                ]
+            },
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Successfully added project"
+                    }
+                },
+                "summary": "This request adds a new project to database ",
+                "description": "Returns:\n    json: response",
+                "operationId": "add a new project",
+                "tags": [
+                    "project"
+                ]
+            }
+        },
+        "/user/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/user"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "This request returns a list with ids from all users",
+                "description": "Returns:\n    list: A list with id from all users in db",
+                "operationId": "list_of_registered_users",
+                "parameters": [
+                    {
+                        "name": "X-Fields",
+                        "in": "header",
+                        "type": "string",
+                        "format": "mask",
+                        "description": "An optional fields mask"
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/user/{public_id}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "The User identifier",
+                    "name": "public_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "User not found."
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/user"
+                        }
+                    }
+                },
+                "summary": "This request returns a user model with given id",
+                "description": "Args:\n    public_id (int): user id\n\nReturns:\n    User: A user model",
+                "operationId": "get a user",
+                "parameters": [
+                    {
+                        "name": "X-Fields",
+                        "in": "header",
+                        "type": "string",
+                        "format": "mask",
+                        "description": "An optional fields mask"
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            }
+        }
+    },
     "info": {
-        "title": "API",
-        "version": "1.0"
+        "title": "HoloCAD API",
+        "version": "1.0.0",
+        "description": "holocad flask API"
     },
     "produces": [
         "application/json"
@@ -12,7 +115,27 @@
     "consumes": [
         "application/json"
     ],
-    "tags": [],
+    "tags": [
+        {
+            "name": "user",
+            "description": "user related operations"
+        },
+        {
+            "name": "project",
+            "description": "project related operations"
+        }
+    ],
+    "definitions": {
+        "user": {
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "user Identifier"
+                }
+            },
+            "type": "object"
+        }
+    },
     "responses": {
         "ParseError": {
             "description": "When a mask can't be parsed"
