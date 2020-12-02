@@ -1,65 +1,147 @@
-openapi: 3.0.0
-info:
-  version: 1.0.0
-  title: HoloCAD
-servers:
-  - url: 'http://localhost:3000'
-paths:
-  /user:
-    get:
-      summary: 'Sample endpoint: Returns new details about a particular user'
-      operationId: listUser
-      tags:
-        - user
-      parameters:
-        - name: id
-          in: query
-          description: ID of the user
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: 'Sample response: Details about a user by ID'
-          headers:
-            x-next:
-              description: A link to the next page of responses
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-components:
-  schemas:
-    User:
-      type: object
-      required:
-        - id
-        - name
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        tag:
-          type: string
-    Error:
-      type: object
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "paths": {
+        "/project/": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Successfully added project"
+                    }
+                },
+                "summary": "This request adds a new project to database ",
+                "description": "Returns:\n    json: response",
+                "operationId": "add a new project",
+                "tags": [
+                    "project"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "summary": "Returns:",
+                "description": "[type]: [description]",
+                "operationId": "List of all projects",
+                "tags": [
+                    "project"
+                ]
+            }
+        },
+        "/user/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/user"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "This request returns a list with ids from all users",
+                "description": "Returns:\n    list: A list with id from all users in db",
+                "operationId": "list_of_registered_users",
+                "parameters": [
+                    {
+                        "name": "X-Fields",
+                        "in": "header",
+                        "type": "string",
+                        "format": "mask",
+                        "description": "An optional fields mask"
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/user/{public_id}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "The User identifier",
+                    "name": "public_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "User not found."
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/user"
+                        }
+                    }
+                },
+                "summary": "This request returns a user model with given id",
+                "description": "Args:\n    public_id (int): user id\n\nReturns:\n    User: A user model",
+                "operationId": "get a user",
+                "parameters": [
+                    {
+                        "name": "X-Fields",
+                        "in": "header",
+                        "type": "string",
+                        "format": "mask",
+                        "description": "An optional fields mask"
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "HoloCAD API",
+        "version": "1.0.0",
+        "description": "holocad flask API"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "user",
+            "description": "user related operations"
+        },
+        {
+            "name": "project",
+            "description": "project related operations"
+        }
+    ],
+    "definitions": {
+        "user": {
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "user Identifier"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}
